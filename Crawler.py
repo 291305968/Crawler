@@ -2,36 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import json
-
-# 网站地址
-webUrl = r"https://www.mzitu.com/page"
-# 随机浏览器User-Agent
-my_headers = [
-    'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.62 '
-    'Safari/537.36',
-    "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 "
-    "Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 "
-    "Safari/537.75.14",
-    "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Win64; x64; Trident/6.0)",
-    'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11',
-    'Opera/9.25 (Windows NT 5.1; U; en)',
-    'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)',
-    'Mozilla/5.0 (compatible; Konqueror/3.5; Linux) KHTML/3.5.5 (like Gecko) (Kubuntu)',
-    'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.12) Gecko/20070731 Ubuntu/dapper-security Firefox/1.5.0.12',
-    'Lynx/2.8.5rel.1 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/1.2.9',
-    "Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Ubuntu/11.04 Chromium/16.0.912.77 "
-    "Chrome/16.0.912.77 Safari/535.7",
-    "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0 "
-]
-# 请求头部，没有referer会影响访问网页和图片下载
-headers = {'referer' : 'https://www.mzitu.com/', 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; WOW64) '
-                                                                'AppleWebKit/537.36 (KHTML, like Gecko) '
-                                                                'Chrome/69.0.3497.100 Safari/537.36'}
-# 主页下载列表页总数
-mainPageNum = 1
+import os
 
 
 #获取详情页页码总数
@@ -107,17 +78,6 @@ def parse_child_html(html) :
     pic_url = {"src" : pic_src, "txt": pic_txt}
     return pic_url
 
-
-# 下载列表页html
-pic_main_htmls = download_htmls(webUrl, mainPageNum)
-# 每个主页解析后图片数据列表
-pic_main_list = []
-# 详情页图片链接列表
-detail_url_lists = []
-# 详情页图片下载链接列表
-detail_download_lists = []
-
-
 # 提取数据
 def disposal_data() :
     #提取主页图片链接和详情页网页链接
@@ -137,6 +97,9 @@ def disposal_data() :
 
 #将解析后的数据保存为json
 def save_json() :
+    json_path = r"D:\meiziwang"
+    if not os.path.exists(json_path) :
+        os.mkdir(json_path)
     with open(r"D:\meiziwang\mainPic.json", "w", encoding='utf-8') as mainPic :
         for data in pic_main_list :
             mainPic.write(json.dumps(data, ensure_ascii=False) + "\n")
@@ -144,6 +107,44 @@ def save_json() :
         for data in detail_download_lists :
             detailPic.write(json.dumps(data, ensure_ascii=False) + "\n")
 
+if __name__ == "__main__":
+    # 网站地址
+    webUrl = r"https://www.mzitu.com/page"
+    # 随机浏览器User-Agent
+    my_headers = [
+        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.62 '
+        'Safari/537.36',
+        "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 "
+        "Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 "
+        "Safari/537.75.14",
+        "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Win64; x64; Trident/6.0)",
+        'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11',
+        'Opera/9.25 (Windows NT 5.1; U; en)',
+        'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)',
+        'Mozilla/5.0 (compatible; Konqueror/3.5; Linux) KHTML/3.5.5 (like Gecko) (Kubuntu)',
+        'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.12) Gecko/20070731 Ubuntu/dapper-security Firefox/1.5.0.12',
+        'Lynx/2.8.5rel.1 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/1.2.9',
+        "Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Ubuntu/11.04 Chromium/16.0.912.77 "
+        "Chrome/16.0.912.77 Safari/535.7",
+        "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0 "
+    ]
+    # 请求头部，没有referer会影响访问网页和图片下载
+    headers = {'referer': 'https://www.mzitu.com/', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) '
+                                                                  'AppleWebKit/537.36 (KHTML, like Gecko) '
+                                                                  'Chrome/69.0.3497.100 Safari/537.36'}
+    # 主页下载列表页总数
+    mainPageNum = 1
+    # 下载列表页html
+    pic_main_htmls = download_htmls(webUrl, mainPageNum)
+    # 每个主页解析后图片数据列表
+    pic_main_list = []
+    # 详情页图片链接列表
+    detail_url_lists = []
+    # 详情页图片下载链接列表
+    detail_download_lists = []
 
-disposal_data()
-save_json()
+    disposal_data()
+    save_json()
